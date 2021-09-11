@@ -1,9 +1,32 @@
+#import main library
 import pygame
+#from Player import Figure
+
+"""
+class Stat():
+    def __init__(self,colors, text):
+        self.text = text
+
+        self.colors = colors
+        self.figures = []
+
+    def create():
+        for i in range(1,8):
+            fig  = figure(self.colors, i)
+            self.figures.append(fig)
+"""
+
+# Проиницилизируем несколько базовых цветов
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GRAY = (125, 125, 125)
+
+# Константы
+fontLocations = {"L":(5,35),"C":(35,35),"R":()}
 
 
-#------------------Menu----------------------------
 
-class MenuManager():
+class objMenu():
     def __init__(self, screen, clock, posX, posY, step, width, height,                                      #Основные параметры
                  type=0, text=[], functions=[], fon=None, img_active=None, img_disactive=None, sound=None): #Дополнительные параметры
         #Иницилизая экрана и таймера
@@ -111,6 +134,32 @@ class MenuManager():
             pass
 
 
+class Panel(pygame.sprite.Sprite):
+    def __init__(self, image, posX, posY, number, text=None, screen=None, font_type=None, font_color = (255,255,255), font_size = 35):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.left = posX
+        self.rect.top = posY
+
+        self.screen = screen
+        self.num = number
+        self.text = text
+
+        self.font_type = font_type
+        self.font_color = font_color
+        self.font_size = font_size
+
+    def render_text(self,x,y,stepX, stepY,text):
+        font = pygame.font.Font(self.font_type, self.font_size)
+        text = font.render(text, True, self.font_color)
+        self.screen.blit(text, (x+stepX,y-stepY))
+
+    def update(self,text=None,stepX=15, stepY=50):
+        if self.text != None:
+            self.render_text(self.rect.left, self.rect.bottom, stepX, stepY, text[self.num])
+
+
 
 class Menu():
     def __init__(self, screen, count, typeMenu, posX_first, posY_first, step, width, height, music, img_active, img_disactive, functions, list_text, typeBtn=0):
@@ -195,72 +244,137 @@ class Menu():
 
 
 
-#-----------------------Buttons---------------------------
+
+
+
+
+
+
 
 class Button:
     """
     Класс отвечающий за создание анимированных кнопок
     """
-    def __init__(self,screen,                                                                                        #Основные параметры
-                 width=300, height=110, img_active=None, img_disactive=None, music=None, function=None, text=None):  #Дополнительные параметры
-        #Иницилизируем экран
+    def __init__(self, screen, x, y,                                                     #Основные параметры
+                 width=300, height=110, img_active=None, img_disactive=None, music=None, #Параметры для кнопки
+                 text_obj=None, font_location = "C",                                     #Параметры для текста
+                 function=None, text=None,                                               #Параметры для функицонала
+                 ):
+        # Экран отрисовки
         self.screen = screen
 
-        #Опредяем ширину и высоту кнопок
+        #Расположение кнопки на экране
+        self.Coords(x,y)
+
+        # Ширина и высота кнопки
         self.width = width
         self.height = height
 
-        #Опредяем изображение кнопок
-        self.active = img_active
-        self.disactive = img_disactive
+        # Изображение кнопки (При наведении и обычная)
+        self.img_active = img_active
+        self.img_disactive = img_disactive
 
-        #Опредяем звук выбраной кнопки, иницилизируем ключ для звука
+        # Звук кнопки, ключ звука
         self.music = music
         self.music_key = True
 
-        #Опредяем текст и функцию кнопки
+        # Текст и положение на кнопке
+        self.text_obj = text_obj
+
+        # Текст и функцию кнопки
         self.text = text
         self.function = function
 
-        #Опредяем нажатие кнопки
+        # Ключ нажатия кнопки
         self.key = False
 
+        self.loacation(font_location)
+
+    @coords.setter
+    def coords(self, *coords):
+        self.x = coords[0]
+        self.y = coords[1]
+
+    def location(self, indent):
+        size = self.font.size()
+        x = size[0]
+        y = size[1]
+        curX_size = self.width - x
+
+        if x > self.width and y > self.height:
+            raise ValueError("Font more then button! Chech value pleas")
+
+        if indent == "C":
+            index_x = curX_size//2
+        elif indent == "R":
+            index_x = 10
+        elif indent == "L":
+            index_x = curX_size  - 10
+
+        self.x_text = self.x + index_x
+        self.y_text = self.y + (self.height - y) // 2
+
+    def tools(self,func):
+        def wrapper(x,y):
+            obj = func(x,y)
+
+            if obj:
+                self.screen.blit(obj, (x,y))
+            else:
+                pygame.draw.Rect(self.screen, GRAY, (x, x + self.width, y, y + self.height))
+        return wrapper
+
+    @tools
+    def in_box(self):
+        if self.music_key and self.music != None:
+           self.music.play()
+           self.music_key = False
+
+        self.key = True
+
+        return self.img_active
+
+    @tools
+    def out_box(self):
+        self.music_key = True
+        self.key = False
+
+        return self.img_disactive
 
     def update(self, x, y, text="!"):
-        """
+        """Каждый кадр
+
         Обновляем состояние кнопки
+
         """
         mouse = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
+        #click = pygame.mouse.get_pressed()
 
-        if x < mouse[0] < x + self.width and y < mouse[1] < y + self.height:
-            if self.music_key and self.music != None:
-               self.music.play()
-               self.music_key = False
-
-            self.screen.blit(self.active, (x,y))
-            self.key = True
+        if self.x < mouse[0] < self.x + self.width and self.y < mouse[1] < self.y + self.height:
+            in_box()
         else:
-            self.screen.blit(self.disactive, (x,y))
-            self.music_key = True
-            self.key = False
+            out_box()
+
+        self.text_obj.draw(self.x_text, self.y_text)
 
 
-        self.render_text(text, x+35,y+35)
+    def is_click(self):
+        """На клик
 
-    def start(self):
-        """
         Определение нажимал ли пользователь на кнопку
+
         """
-        if self.key == True:
+        if self.key:
             return self.function
-        else:
-            return False
 
+        return False
 
-    def draw(self, x, y, font_color = (0,0,0), font_type=None, font_size=55):
-        """
-        Прорисовка текста
+    """
+    def draw(self, x, y):
+        """#Каждый кадр
+
+        #Прорисовка текста
+
         """
         #Иницилизация объкта
         self.x = x
@@ -272,47 +386,98 @@ class Button:
 
         self.render_text("!",x+5,y+25)
 
-
     def render_text(self,text,x,y):
+        """#Каждый кадр
+
+        #Вывод текст на экран
+
         """
-        Вывод текст на экран
-        """
-        if text != "!":
-            self.text = text
-
-        font_type = pygame.font.Font(self.f_t, self.f_s)
-        text = font_type.render(self.text, True, self.f_c)
-        self.screen.blit(text, (x, y))
+        #Если self.text постоянный, то зачем делать проверку
+        #if text != "!":
+        #    self.text = text
+        self.screen.blit(self.text_to_render, (self.x_text, self.y_text))
+    """
 
 
+"""
+class Button_stat(Button):
+    def __init__(self, screen, width, height, img_active, img_disactive, music, function, texts, coords):
+        Button.__init__(self,screen, width, height, img_active, img_disactive, music, funtion)
+
+        self.texts = texts
+        self.coords = coords
+        self.n = len(texts)
+
+    def draw(self, x, y, font_color=(0,0,0), font_type=None, font_size=35):
+        for i in range(self.n):
+            self.render_text(self.coords[i][0], self.coords[i][1], self.texts[i])
+"""
+
+class Button_multi(Button):
+    def __init__(self, screen, width, height, img_active, img_disactive, music, function, texts):
+        Button.__init__(self, screen, width, height, img_active, img_disactive, music, function)
+
+        self.n = 0
+        self.texts = texts
+
+        self.text = texts[0]
+
+    def check(self):
+        if self.key == True:
+            self.n += 1
+            if self.n == 4:
+                self.n = 0
+
+            self.text = self.texts[self.n]
 
 
-#-------------------Text-----------------
+
+
 
 class Text():
-    def __init__(self, text, screen,                                       #Основные параметры
-                 color_font=(230,230,0), type_font=None, size_font = 60):  #Дополнительные параметры
-        #Иницилизация текста и экрана
-        self.text = text
+    def __init__(self, screen, text,                                       #Основные параметры
+                 font_color=(230,230,0), font_type=None, font_type = 60):  #Дополнительные параметры
+        # Экран отрисовки
         self.screen = screen
 
-        #Иницилизируем параметры текст цвет, шрифт, размер
-        self.font_color = color_font
-        self.font_type = type_font
-        self.font_size = size_font
+        # Рендер текста для вывода
+        self.font_color = font_color
+        self.font = pygame.font.Font(font_type, font_size)
+        self.text_to_render = self.font.render(text, True, font_color)
 
-    def draw(self, x, y, text=None):
+
+    def draw(self, x, y):
         """
         Отображет текст на экране
         """
-        #Если текст передаётся пустой, то пишётся старый
-        if text != None:
-            self.text = text
+        self.screen.blit(self.text_to_render, (x,y))
 
-        font = pygame.font.Font(self.font_type, self.font_size)
-        text = font.render(self.text, True, self.font_color)
-        self.screen.blit(text, (x,y))
+"""
+class MultiText(Text):
+    def __init__(self, *data):    #data - information to main class
+        super().__init__(*data)
+
+    def update_text(self, text):
+        self.text_to_render = self.font.render(text, True, self.font_color)
+"""
 
 
-if __name__=="__main__":
-    pass
+class ObjText():
+    def __init__(self, screen, amount, texts,
+                 *fonts_setting
+                 ):
+        self.screen = screen
+        self.amount = amount
+        self.texts = texts
+
+        self.font_setting
+
+        self.list = []
+
+    def create_texts(self):
+        for text in range(amount):
+            obj = Text(self.screen, self.texts[i], *self.font_setting)
+            self.list.append(obj)
+
+    def get_texts(self):
+        return self.list
