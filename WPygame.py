@@ -22,7 +22,6 @@ BLACK = (0, 0, 0)
 GRAY = (125, 125, 125)
 
 # Константы
-fontLocations = {"L":(5,35),"C":(35,35),"R":()}
 
 
 
@@ -134,33 +133,6 @@ class objMenu():
             pass
 
 
-class Panel(pygame.sprite.Sprite):
-    def __init__(self, image, posX, posY, number, text=None, screen=None, font_type=None, font_color = (255,255,255), font_size = 35):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = image
-        self.rect = self.image.get_rect()
-        self.rect.left = posX
-        self.rect.top = posY
-
-        self.screen = screen
-        self.num = number
-        self.text = text
-
-        self.font_type = font_type
-        self.font_color = font_color
-        self.font_size = font_size
-
-    def render_text(self,x,y,stepX, stepY,text):
-        font = pygame.font.Font(self.font_type, self.font_size)
-        text = font.render(text, True, self.font_color)
-        self.screen.blit(text, (x+stepX,y-stepY))
-
-    def update(self,text=None,stepX=15, stepY=50):
-        if self.text != None:
-            self.render_text(self.rect.left, self.rect.bottom, stepX, stepY, text[self.num])
-
-
-
 class Menu():
     def __init__(self, screen, count, typeMenu, posX_first, posY_first, step, width, height, music, img_active, img_disactive, functions, list_text, typeBtn=0):
         self.screen = screen
@@ -242,13 +214,30 @@ class Menu():
             self.label_list[i].draw(x[i],y[i])
 
 
+class Panel(pygame.sprite.Sprite):
+    def __init__(self, image, posX, posY, number, text=None, screen=None, font_type=None, font_color = (255,255,255), font_size = 35):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.left = posX
+        self.rect.top = posY
 
+        self.screen = screen
+        self.num = number
+        self.text = text
 
+        self.font_type = font_type
+        self.font_color = font_color
+        self.font_size = font_size
 
+    def render_text(self,x,y,stepX, stepY,text):
+        font = pygame.font.Font(self.font_type, self.font_size)
+        text = font.render(text, True, self.font_color)
+        self.screen.blit(text, (x+stepX,y-stepY))
 
-
-
-
+    def update(self,text=None,stepX=15, stepY=50):
+        if self.text != None:
+            self.render_text(self.rect.left, self.rect.bottom, stepX, stepY, text[self.num])
 
 
 class Button:
@@ -369,49 +358,6 @@ class Button:
 
         return False
 
-    """
-    def draw(self, x, y):
-        """#Каждый кадр
-
-        #Прорисовка текста
-
-        """
-        #Иницилизация объкта
-        self.x = x
-        self.y = y
-
-        self.f_c = font_color
-        self.f_t = font_type
-        self.f_s = font_size
-
-        self.render_text("!",x+5,y+25)
-
-    def render_text(self,text,x,y):
-        """#Каждый кадр
-
-        #Вывод текст на экран
-
-        """
-        #Если self.text постоянный, то зачем делать проверку
-        #if text != "!":
-        #    self.text = text
-        self.screen.blit(self.text_to_render, (self.x_text, self.y_text))
-    """
-
-
-"""
-class Button_stat(Button):
-    def __init__(self, screen, width, height, img_active, img_disactive, music, function, texts, coords):
-        Button.__init__(self,screen, width, height, img_active, img_disactive, music, funtion)
-
-        self.texts = texts
-        self.coords = coords
-        self.n = len(texts)
-
-    def draw(self, x, y, font_color=(0,0,0), font_type=None, font_size=35):
-        for i in range(self.n):
-            self.render_text(self.coords[i][0], self.coords[i][1], self.texts[i])
-"""
 
 class Button_multi(Button):
     def __init__(self, screen, width, height, img_active, img_disactive, music, function, texts):
@@ -429,9 +375,6 @@ class Button_multi(Button):
                 self.n = 0
 
             self.text = self.texts[self.n]
-
-
-
 
 
 class Text():
