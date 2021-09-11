@@ -288,7 +288,7 @@ class Button:
         # Ключ нажатия кнопки
         self.key = False
 
-        self.loacation(font_location)
+        self.location(font_location)
 
     @coords.setter
     def coords(self, *coords):
