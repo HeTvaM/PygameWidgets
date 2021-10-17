@@ -253,7 +253,7 @@ class Font():
         self.color = font_color
         self.size = font_size
 
-        self.font = self.font = pygame.font.Font(font_type, font_size, *kwargs)
+        self.font = self.font = pygame.font.Font(font_type, font_size, kwargs)
 
     def render(self, text):
         return self.font.render(text, True, self.color)
