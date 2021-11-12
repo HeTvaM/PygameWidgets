@@ -8,13 +8,17 @@ from abc import ABC, abstractmethod
 from constpack import WHITE, BLACK, GRAY
 
 #>------------SUMMARY----------------<
-
+#
+#
+#
+#
+#
 #>------------SUMMARY----------------<
 
 # ABC class for button and label
-class Panel(ABC):
-    def __init__(self, screen, x, y, text, color = WHITE,                                             #Основные параметры
-                 width=300, height=110, img_active=None, img_disactive=None, music=None, #Параметры для кнопки
+class AbsPanel(ABC):
+    def __init__(self, screen, x, y, text, color = WHITE,                                 #Основные параметры
+                 width=300, height=110, img_active=None, img_disactive=None,             #Параметры для кнопки
                  function=None,                                                          #Функция кнопки
                  ):
         # Экран отрисовки
