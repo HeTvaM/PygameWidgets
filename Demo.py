@@ -14,6 +14,10 @@ from constpack import arial, vivaldi, comicsansms
 # Wait!
 #>------------SUMMARY----------------<
 
+# const
+KEYS = ["right shift", "left shift", "right alt", "left alt",
+        "right ctrl", "left ctrl", "num lock", "caps lock"]
+
 # Main class
 class Scene:
     def __init__(self, screen, time):
@@ -110,6 +114,7 @@ class Scene:
                             key = "   "
                         else:
                             key = pg.key.name(event.key)
+                            if key in KEYS: key = ""
                         id.add_key(key)
         return id
 

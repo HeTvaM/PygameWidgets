@@ -29,7 +29,7 @@ def index(time):
 # route which open demo.py
 @app.route("/update")
 def update():
-    from demo_grid import play #Demo import play
+    from Demo import play #Demo import play
     play()
 
     return "<h1>END UPDATE</h1>"
@@ -41,7 +41,7 @@ class RunThread(Thread):
         self.time = int(time)
 
     def run(self):
-        from demo_grid import play #Demo import play
+        from Demo import play #Demo import play
         play(self.time)
 
         del()

@@ -15,6 +15,8 @@ from constpack import WHITE, BLACK, GRAY
 # Library of widgets for the paygame library.
 # The library provides extensive options for layout and customization of widgets. As well as optimized solutions for their rendering
 # While available:
+# -Menu( just control button and text)
+# -Input Button
 # -Button
 # -Label
 # -Text
@@ -24,7 +26,8 @@ from constpack import WHITE, BLACK, GRAY
 # -Buttons menu
 # -Panels
 # -Complete menu
-# -Fields for input
+# -Toolbar
+# -Drop-Down Button
 #>------------SUMMARY----------------<
 
 
@@ -48,33 +51,28 @@ class InputButton(AbsPanel):
         self.music_key = True
 
         self.count = 0
-        self.add = 0
+        self.add = 1
 
     def check_add(self):
-        if self.add % 2 == 0:
-            self.input_text += "|"
-        else:
+        if (self.count)// 35 % 2 == self.add and self.count != 0:
             try:
                 if self.input_text[-1] == "|":
                     self.input_text = self.input_text[:-1]
             except IndexError:
                 pass
+                
+            if self.add == 1:
+                self.input_text += "|"
+            self.add = 1 - self.count // 30 % 2
 
         self.text.change_text(self.input_text)
 
     def update(self, *args):
         if self.focus:
             self.in_box()
+            self.check_add()
 
-            if self.count > 35 or self.count == 0:
-                self.count = 1
-                self.add += 1
-                self.check_add()
-
-                if self.add > 11:
-                    self.add = 0
-            else:
-                self.count +=1
+            self.count += 1
         else:
             self.out_box()
 
