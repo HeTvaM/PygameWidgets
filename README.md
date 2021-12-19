@@ -2,6 +2,16 @@
 
 >Simple Widgets for pygame. Such as Menu, buttons, labels, texts, and so on
 
-Here a frame for create and initilisation widget such as menu, button, text in pygame.
+Here a frame for create and initilisation widget in pygame.
+Now available to create widgets such as:
+-Input Button
+-Button
+-Label
+-Text
+tools:
+-Menu( just control button and text)
+-Font
 
->It's my frist experience! Good luck in use!
+For more details pls watching Doc.txt!
+
+>Good luck in use! Write me if you have a questions, recommends or critics: guddr@mail.ru
