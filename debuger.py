@@ -41,7 +41,7 @@ class RunThread(Thread):
         self.time = int(time)
 
     def run(self):
-        from Demo import play #Demo import play
+        from Examples.toolbar import play #Demo import play
         play(self.time)
 
         del()

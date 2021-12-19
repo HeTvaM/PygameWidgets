@@ -95,8 +95,8 @@ class Scene:
                     else:
                         obj.end_key()
 
-                    res = btn.click()
-                    if res is not None:
+                    res = btn.click(mouse)
+                    if res is not False:
                         res()
 
 
@@ -127,11 +127,13 @@ class Scene:
 
             if event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
+                    mouse = pg.mouse.get_pos()
                     for i in range(obj.get_amount()):
-                        evt = obj.btn_list[i].click()
-                        if evt is True:
-                            print(obj.btn_list[i])
-                            break
+                        try:
+                            evt = obj.btn_list[i].click(mouse)
+                        except AttributeError:
+                            evt = obj.click(mouse)
+                        print(evt)
 
     def check_event(self):
         for event in pg.event.get():

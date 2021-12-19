@@ -17,6 +17,7 @@ from constpack import WHITE, BLACK, GRAY
 # While available:
 # -Menu( just control button and text)
 # -Entry
+# -Toolbar
 # -Button
 # -Label
 # -Text
@@ -26,11 +27,77 @@ from constpack import WHITE, BLACK, GRAY
 # -Buttons menu
 # -Panels
 # -Complete menu
-# -Toolbar
 # -Drop-Down Button
 #>------------SUMMARY----------------<
 
 
+
+#-----------------Toolbar--------------
+class Toolbar(AbsPanel):
+    def __init__(self, screen, x, y, text, color = WHITE,
+                 dots=[0,10], steps=10, time=60, rColor = GRAY,
+                 width=500, height=70, img_active=None, img_disactive=None, music=None,
+                 function=None
+                 ):
+        super().__init__(screen, x, y, text, color,
+                         width, height, img_active, img_disactive, music,
+                         function)
+
+        self.dots = dots
+        self.steps = steps
+        self.time = time
+
+        self.res = 0
+        self.key = True
+        self.count = 0
+
+        self.rect_color = rColor
+        self.rect_size = [(width - 20) / steps, height-10]
+        self.text_pos = [self.x + width//2 - width//8, self.y + height + 10]
+        self.text.change_text(f"{self.dots[0]}/{self.dots[1]}")
+
+        print("Func", self.function)
+
+    def avto(self):
+        if (self.count) // self.time == 1 and self.count != 0:
+            self.res += 1
+            self.count = 0
+            if self.res > self.steps-1:
+                self.text.change_text(f"{self.dots[1]}\{self.dots[1]}")
+                self.key = False
+                return self.func()
+
+            str = f"{(self.dots[1]//self.steps)*self.res}\{self.dots[1]}"
+            self.text.change_text(str)
+
+        self.count += 1
+
+    def status(self):
+        if self.key:
+            self.avto()
+        else:
+            pass
+
+    def update(self, *args):
+        self.status()
+        self.out_box()
+
+        x, y = self.x + 10, self.y + 5
+        rect = pygame.Rect(x,y,self.rect_size[0]*self.res, self.rect_size[1])
+        pygame.draw.rect(self.screen, self.rect_color, rect)
+
+        self.text.draw(*self.text_pos)
+
+    def set_res(self, res):
+        self.res = res
+
+    def get_res(self, res):
+        return self.res
+
+    def func(self):
+        self.function()
+
+#------------------------------------
 
 #------------------Entry--------------
 class Entry(AbsPanel):
@@ -38,8 +105,7 @@ class Entry(AbsPanel):
                  width=300, height=110, img_active=None, img_disactive=None, music=None
                  ):
         super().__init__(screen, x, y, text, color,
-                         width, height, img_active, img_disactive,
-                         function)
+                         width, height, img_active, img_disactive, music)
 
         self.focus = False
         self.input_text = ""
@@ -50,19 +116,22 @@ class Entry(AbsPanel):
         self.music_key = True
 
         self.count = 0
-        self.add = 1
+        self.res= 1
 
     def check_add(self):
-        if (self.count)// 35 % 2 == self.add and self.count != 0:
+        if (self.count)// 35 % 2 == self.res and self.count != 0:
             try:
                 if self.input_text[-1] == "|":
                     self.input_text = self.input_text[:-1]
             except IndexError:
                 pass
 
-            if self.add == 1:
+            if self.res == 1:
                 self.input_text += "|"
-            self.add = 1 - self.count // 30 % 2
+            if self.res == 0:
+                self.count = 0
+
+            self.res = 1 - self.count // 35 % 2
 
         self.text.change_text(self.input_text)
 
@@ -77,43 +146,23 @@ class Entry(AbsPanel):
 
         self.text.draw_in_obj(self.x, self.y)
 
-    def click(self, mouse):
-        if self.x < mouse[0] < self.x + self.width and self.y < mouse[1] < self.y + self.height:
-            return True
-
-        return False
-
     @check_key
     def add_key(self, key):
         self.input_text += key
-        self.text.change_text(self.input_text)
 
     @check_key
     def delete_key(self):
         self.input_text = self.input_text[:-1]
-        self.text.change_text(self.input_text)
 
     @check_key
     def end_key(self):
         self.focus = False
-        self.text.change_text(self.input_text)
-
-    @tools()
-    def in_box(self) -> any:
-        if self.music_key and self.music:
-            self.music.play()
-            self.music_key = False
-
-        return self.img_active
-
-    @tools()
-    def out_box(self) -> any:
-        self.music_key = True
-
-        return self.img_disactive
 
     def get(self):
         return self.input_text
+
+#----------------------------------------------
+
 
 
 
@@ -299,61 +348,31 @@ class Button(AbsPanel):
                  ):
         #Иницилизация родительского класса
         super().__init__(screen, x, y, text, color, \
-                         width, height, img_active, img_disactive
+                         width, height, img_active, img_disactive, music,
+                         function
                          )
-
-        # Звук кнопки, флаг звука
-        self.music = music
-        self.music_key = True
-
-        # Функцию кнопки
-        self.function = function
-
-        # Флаг нажатия кнопки
-        self.key = False
+        self.active = True
 
     def update(self, *args) -> any:
         """Каждый кадр
 
         Обновляем состояние кнопки
-
         """
-        mouse = args[0]
+        if self.active is True:
+            mouse = args[0]
 
-        if self.x < mouse[0] < self.x + self.width and self.y < mouse[1] < self.y + self.height:
-            self.in_box()
+            if self.x < mouse[0] < self.x + self.width and self.y < mouse[1] < self.y + self.height:
+                self.in_box()
+            else:
+                self.out_box()
+
+            self.text.draw_in_obj(self.x, self.y)
+
         else:
-            self.out_box()
+            pass
 
-        self.text.draw_in_obj(self.x, self.y)
-
-    def click(self) -> any:
-        """На клик
-
-        Определение нажимал ли пользователь на кнопку
-
-        """
-        if self.key:
-            return self.function
-
-        return None
-
-    @tools()
-    def in_box(self) -> any:
-        if self.music_key and self.music:
-           self.music.play()
-           self.music_key = False
-
-        self.key = True
-
-        return self.img_active
-
-    @tools()
-    def out_box(self) -> any:
-        self.music_key = True
-        self.key = False
-
-        return self.img_disactive
+    def get_amount(self):
+        return 1
 
 #------------------------------------------------------------------------
 
@@ -416,6 +435,7 @@ class Panel(AbsPanel):
         self.objs_text.draw_in_obj()
 
 #----------------------------------------------------------
+
 
 #------------------------TEXT------------------------------
 class ObjsText():
@@ -483,6 +503,8 @@ class ObjsText():
         self.step = step
         self.type = type
         self.location = location
+
+#-----------------------------------------------------------
 
 
 
@@ -573,7 +595,6 @@ Text{x,y}. Please change button or font size.")
         """
         Отображет текст на каком-то объекте с отступами
         """
-        #print(self.indent_x, self.indent_y)
         self.screen.blit(self.text_to_render, (x+self.indent_x, y+self.indent_y))
 
 
@@ -604,7 +625,7 @@ class Font():
     def set_color(self):
         self.color = color
 
-
+#------------------------------------------------
 
 
 

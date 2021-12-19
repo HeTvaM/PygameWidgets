@@ -55,4 +55,6 @@ def check_key(func):
 
         func(*args)
 
+        cls.text.change_text(cls.input_text)
+
     return wrapper
