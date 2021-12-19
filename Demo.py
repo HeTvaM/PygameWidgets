@@ -3,7 +3,7 @@ import pygame as pg
 import sys
 
 # import user library
-from WPygame import Font, Text, Button, Label, Menu, ObjsText, ObjsMenu, InputButton
+from WPygame import Font, Text, Button, Label, Menu, ObjsText, ObjsMenu, Entry
 from logger import log, log_with_return
 from constpack import GRAY, BLACK, EMERALD
 from constpack import arial, vivaldi, comicsansms
@@ -32,10 +32,10 @@ class Scene:
 
         return btn
 
-    def create_input(self):
+    def create_entry(self):
         font = Font(comicsansms, EMERALD, 40)
         text = Text(self.sc, "", font=font, text_location="L")
-        btn = InputButton(self.sc, 100, 200, text, color=GRAY)
+        btn = Entry(self.sc, 100, 200, text, color=GRAY)
 
         return btn
 
@@ -78,7 +78,7 @@ class Scene:
 
         return objs_menu
 
-    def check_event_input(self, obj, btn, id):
+    def check_event_entry(self, obj, btn, id):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
@@ -154,7 +154,7 @@ class Scene:
 
         play = True
         time = 0
-        input_btn = self.create_input()
+        input_btn = self.create_entry()
         id = None
         text = Text(self.sc, "Hi!")
         btn = self.create_btn(btn)
@@ -167,7 +167,7 @@ class Scene:
             time += 1
 
             mouse = pg.mouse.get_pos()
-            id = self.check_event_input(input_btn, btn, id)
+            id = self.check_event_entry(input_btn, btn, id)
             #self.check_event_obj(btn)
             #self.check_event_obj(menu)
 

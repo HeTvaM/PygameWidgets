@@ -16,7 +16,7 @@ from constpack import WHITE, BLACK, GRAY
 # The library provides extensive options for layout and customization of widgets. As well as optimized solutions for their rendering
 # While available:
 # -Menu( just control button and text)
-# -Input Button
+# -Entry
 # -Button
 # -Label
 # -Text
@@ -32,11 +32,10 @@ from constpack import WHITE, BLACK, GRAY
 
 
 
-#------------------InputButton--------------
-class InputButton(AbsPanel):
+#------------------Entry--------------
+class Entry(AbsPanel):
     def __init__(self, screen, x, y, text, color = WHITE,
-                 width=300, height=110, img_active=None, img_disactive=None, music=None,
-                 function=None
+                 width=300, height=110, img_active=None, img_disactive=None, music=None
                  ):
         super().__init__(screen, x, y, text, color,
                          width, height, img_active, img_disactive,
@@ -60,7 +59,7 @@ class InputButton(AbsPanel):
                     self.input_text = self.input_text[:-1]
             except IndexError:
                 pass
-                
+
             if self.add == 1:
                 self.input_text += "|"
             self.add = 1 - self.count // 30 % 2
