@@ -17,7 +17,7 @@ from constpack import WHITE, BLACK, GRAY
 # While available:
 # -Menu( just control button and text)
 # -Entry
-# -Toolbar
+# -Progressbar
 # -Button
 # -Label
 # -Text
@@ -32,8 +32,8 @@ from constpack import WHITE, BLACK, GRAY
 
 
 
-#-----------------Toolbar--------------
-class Toolbar(AbsPanel):
+#-----------------Progressbar--------------
+class Progressbar(AbsPanel):
     def __init__(self, screen, x, y, text, color = WHITE,
                  dots=[0,10], steps=10, time=60, rColor = GRAY,
                  width=500, height=70, img_active=None, img_disactive=None, music=None,
@@ -55,8 +55,6 @@ class Toolbar(AbsPanel):
         self.rect_size = [(width - 20) / steps, height-10]
         self.text_pos = [self.x + width//2 - width//8, self.y + height + 10]
         self.text.change_text(f"{self.dots[0]}/{self.dots[1]}")
-
-        print("Func", self.function)
 
     def avto(self):
         if (self.count) // self.time == 1 and self.count != 0:

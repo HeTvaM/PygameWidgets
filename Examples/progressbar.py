@@ -3,7 +3,7 @@ import pygame as pg
 import sys
 
 # import user library
-from WPygame import Font, Text, Toolbar, Button
+from WPygame import Font, Text, Progressbar, Button
 from logger import log, log_with_return
 from constpack import GRAY, BLACK, EMERALD
 from constpack import arial, vivaldi, comicsansms
@@ -31,12 +31,12 @@ class Scene:
 
         return btn
 
-    def create_toolbar(self, func):
+    def create_progressbar(self, func):
         font = Font(comicsansms, EMERALD, 40)
         text = Text(self.sc, "", font=font)
-        toolbar = Toolbar(self.sc, 100, 200, text, width = 600, function=func)
+        progressbar = Progressbar(self.sc, 100, 200, text, width = 600, function=func)
 
-        return toolbar
+        return progressbar
 
     def check_event(self, obj):
         for event in pg.event.get():
@@ -60,7 +60,7 @@ class Scene:
         time = 0
         btn = self.create_btn()
         btn.disactivate()
-        tlb = self.create_toolbar(btn.activate)
+        tlb = self.create_progressbar(btn.activate)
         cursor = pg.mouse.set_cursor(*pg.cursors.arrow)
         while play:
             self.check_time(time)

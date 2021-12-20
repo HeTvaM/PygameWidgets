@@ -4,6 +4,7 @@
 
 Here a frame for create and initialize widget in pygame.
 Now available to create widgets such as:
+-ProgressBar
 -Entry
 -Button
 -Label
