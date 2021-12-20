@@ -7,7 +7,15 @@ from threading import Thread
 from flask import Flask
 
 #>------------SUMMARY----------------<
-
+# This module is designed to modify code in real time.
+# This is where the flask web library is used. With the help of a dynamic url,
+# we can transfer the running time of the program. This helps a lot, for example,
+# when you need to arrange widgets and restart the program, through the terminal
+# or by pressing additional buttons, it only takes time. Here you just refresh
+# the page in the browser and your program is restarted.
+#
+# Important! It is necessary that there are no changes in the program while it is running.
+# You can make changes, however, if you want to save them, make sure that the program is not running.
 #>------------SUMMARY----------------<
 
 
@@ -41,7 +49,7 @@ class RunThread(Thread):
         self.time = int(time)
 
     def run(self):
-        from Examples.toolbar import play #Demo import play
+        from Examples.progressbar import play #Demo import play
         play(self.time)
 
         del()
