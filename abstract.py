@@ -43,8 +43,14 @@ class AbsPanel(ABC):
         self.music_key = True
         self.function = function
 
+        # Счётчик времени исполнения какой-то функции
+        self.count = 0
+
         # Цвет панели
         self.COLOR = color
+
+        # Флаг, что панель можно наблюдать
+        self.active = True
 
         # Прямоугольная область если не будет изображения
         if img_disactive is None:

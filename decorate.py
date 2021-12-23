@@ -58,3 +58,27 @@ def check_key(func):
         cls.text.change_text(cls.input_text)
 
     return wrapper
+
+def is_active(func):
+    def wrapper(*args, **kwargs):
+        cls = args[0]
+
+        if cls.active is True:
+            func(*args)
+
+    return wrapper
+
+def count(time, command):
+    def inside(func):
+        def wrapper(*args, **kwargs):
+            cls = args[0]
+            flag = func(*args, **kwargs)
+
+            if cls.count // 30 > time:
+                if flag:
+                    command(cls)
+                cls.count = 0
+
+            cls.count += 1
+        return wrapper
+    return inside

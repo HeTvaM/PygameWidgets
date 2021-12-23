@@ -48,7 +48,10 @@ class Scene:
                 if event.button == 1:
                     mouse = pg.mouse.get_pos()
                     evt = obj.click(mouse)
-                    evt()
+                    try:
+                        evt()
+                    except TypeError:
+                        print(evt)
 
     def check_time(self, time):
         if time//30 > self.time:

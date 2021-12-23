@@ -6,7 +6,7 @@ from abstract import AbsPanel
 from typing import List, Optional, Tuple
 
 # import user's library
-from decorate import tools, check_size, check_key
+from decorate import tools, check_size, check_key, is_active, count
 from logger import terminal_print_cls, termimal_print, log_print_cls, log_print
 from constpack import WHITE, BLACK, GRAY
 
@@ -31,6 +31,74 @@ from constpack import WHITE, BLACK, GRAY
 #>------------SUMMARY----------------<
 
 
+#--------------Drop-Dowm Button-------------
+class DDownButton(AbsPanel):
+    def __init__(self, screen, x, y, texts, color = WHITE,
+                 width=300, height=110, img_active=None, img_disactive=None, music=None
+                 ):
+        super().__init__(screen, x, y, texts[0], color,
+                         width, height, img_active, img_disactive, music
+                         )
+
+        self.rect_drop = pygame.Rect(x, y, width-10, height-10)
+        self.texts = texts
+        self.n = 1
+        self.coords = [(x+x*i, y+y*i) for i in range(1, len(texts))]
+        print("COORDS", self.coords)
+        self.flag = False
+        self.rects = [pg.Rect(i[0], i[1], width-10, height-10) for i in check()]
+
+    def check():
+        try:
+            len = self.coords[0:3]
+        except IndexError:
+            len = self.coords
+
+        return len
+
+    def click(self, mouse):
+        if self.flag is False:
+            if self.x < mouse[0] < self.x + self.width and self.y < mouse[1] < self.y + self.height:
+                self.flag = True
+
+        else:
+            for coord in check():
+                x, y = self.x + coord[0], self.y + coord[1]
+                if x < mouse[0] < x + (self.width-10) and x < mouse[1] < y + (self.height-10):
+                    self.change_text()
+
+            self.flag = False
+
+    def change_text(self):
+        self.text = self.texts[self.n]
+        self.n += 1
+
+        if self.n > len(self.texts):
+            self.n = 0
+
+    @is_active
+    def update(self, *args):
+        mouse = args[0]
+
+        if self.x < mouse[0] < self.x + self.width and self.y < mouse[1] < self.y + self.height:
+            self.in_box()
+        else:
+            self.out_box()
+
+        self.text.draw_in_obj(self.x, self.y)
+
+        if self.flag is True:
+            for num, rect in enumerate(check()):
+                pygame.draw.rect(self.screen, self.rect_color, rect)
+                self.texts[num+1]
+
+
+
+
+
+
+
+
 
 #-----------------Progressbar--------------
 class Progressbar(AbsPanel):
@@ -53,37 +121,32 @@ class Progressbar(AbsPanel):
 
         self.rect_color = rColor
         self.rect_size = [(width - 20) / steps, height-10]
+        self.rect_add = pygame.Rect(x,y,self.rect_size[0]*self.res, self.rect_size[1])
         self.text_pos = [self.x + width//2 - width//8, self.y + height + 10]
         self.text.change_text(f"{self.dots[0]}/{self.dots[1]}")
 
-    def avto(self):
-        if (self.count) // self.time == 1 and self.count != 0:
-            self.res += 1
-            self.count = 0
-            if self.res > self.steps-1:
-                self.text.change_text(f"{self.dots[1]}\{self.dots[1]}")
-                self.key = False
-                return self.func()
+    def avto(cls):
+        cls.res += 1
+        cls.rect_add.update(cls.x+10,cls.y+5,cls.rect_size[0]*cls.res, cls.rect_size[1]) #= pg.Rect(x,y,self.rect_size[0]*self.res, self.rect_size[1])
+        if cls.res > cls.steps-1:
+            cls.text.change_text(f"{cls.dots[1]}\{cls.dots[1]}")
+            cls.key = False
+            return cls.func()
 
-            str = f"{(self.dots[1]//self.steps)*self.res}\{self.dots[1]}"
-            self.text.change_text(str)
+        str = f"{(cls.dots[1]//cls.steps)*cls.res}\{cls.dots[1]}"
+        cls.text.change_text(str)
 
-        self.count += 1
-
+    @count(2, avto)
     def status(self):
         if self.key:
-            self.avto()
-        else:
-            pass
+            return True
 
+    @is_active
     def update(self, *args):
         self.status()
         self.out_box()
 
-        x, y = self.x + 10, self.y + 5
-        rect = pygame.Rect(x,y,self.rect_size[0]*self.res, self.rect_size[1])
-        pygame.draw.rect(self.screen, self.rect_color, rect)
-
+        pygame.draw.rect(self.screen, self.rect_color, self.rect_add)
         self.text.draw(*self.text_pos)
 
     def set_res(self, res):
@@ -133,6 +196,7 @@ class Entry(AbsPanel):
 
         self.text.change_text(self.input_text)
 
+    @is_active
     def update(self, *args):
         if self.focus:
             self.in_box()
@@ -156,6 +220,7 @@ class Entry(AbsPanel):
     def end_key(self):
         self.focus = False
 
+    @check_key
     def get(self):
         return self.input_text
 
@@ -351,23 +416,20 @@ class Button(AbsPanel):
                          )
         self.active = True
 
+    @is_active
     def update(self, *args) -> any:
         """Каждый кадр
 
         Обновляем состояние кнопки
         """
-        if self.active is True:
-            mouse = args[0]
+        mouse = args[0]
 
-            if self.x < mouse[0] < self.x + self.width and self.y < mouse[1] < self.y + self.height:
-                self.in_box()
-            else:
-                self.out_box()
-
-            self.text.draw_in_obj(self.x, self.y)
-
+        if self.x < mouse[0] < self.x + self.width and self.y < mouse[1] < self.y + self.height:
+            self.in_box()
         else:
-            pass
+            self.out_box()
+
+        self.text.draw_in_obj(self.x, self.y)
 
     def get_amount(self):
         return 1
