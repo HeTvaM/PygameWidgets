@@ -152,7 +152,7 @@ class Progressbar(AbsPanel):
     def set_res(self, res):
         self.res = res
 
-    def get_res(self, res):
+    def get_res(self):
         return self.res
 
     def func(self):
@@ -459,7 +459,7 @@ class Label(AbsPanel):
 
 
 #---------------------PANEL-----------------------
-
+"""
 class Panel(AbsPanel):
     def __init__(self, screen, x, y,
                  width=600, height=600, image=None,
@@ -493,6 +493,7 @@ class Panel(AbsPanel):
 
     def update(self):
         self.objs_text.draw_in_obj()
+"""
 
 #----------------------------------------------------------
 
@@ -566,9 +567,7 @@ class ObjsText():
 
 #-----------------------------------------------------------
 
-
-
-
+#--------------TEXT-----------------
 class Text():
     def __init__(self, screen, text, font=None,                                             #Основные параметры
                  font_color=GRAY, font_type=None, font_size=50, text_location="C",          #Цвет, Шрифт, Размер, Выравнивание
@@ -661,17 +660,17 @@ Text{x,y}. Please change button or font size.")
 #----------------------------------------------------------
 
 
-#--------------FONTS-------------------------
+#--------------FONT-------------------------
 class Font():
-    def __init__(self, font_type, font_color, font_size,
+    def __init__(self, type, color, size,
                  *args, **kwargs
                  ):
-        if font_type is not None:
-            self.type = font_type
-        self.color = font_color
-        self.size = font_size
 
-        self.font = self.font = pygame.font.Font(font_type, font_size, *kwargs)
+        self.type = type
+        self.color = color
+        self.size = size
+
+        self.font = pygame.font.Font(type, size, *args)
 
     def render(self, text: str) -> any:
         return self.font.render(text, True, self.color)
@@ -682,7 +681,7 @@ class Font():
     def get_size(self, text:str) -> List[int]:
         return self.font.size(text)
 
-    def set_color(self):
+    def set_color(self, color):
         self.color = color
 
 #------------------------------------------------
