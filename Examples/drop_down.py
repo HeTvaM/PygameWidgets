@@ -3,7 +3,7 @@ import pygame as pg
 import sys
 
 # import user library
-from WPygame import Font, Text, Progressbar, Button
+from WPygame import Font, Text, DDownButton
 from logger import log, log_with_return
 from constpack import GRAY, BLACK, EMERALD
 from constpack import arial, vivaldi, comicsansms
@@ -18,46 +18,37 @@ from abstract import Scene
 
 # const
 
-
 # Main class
 class Frame(Scene):
     def __init__(self, screen, time):
         super().__init__(screen, time)
 
-    def create_btn(self):
+    def create_dropdown(self):
+        texts = ["Аркада", "Платформер", "Экшен", "Симулятор"]
         font = Font(comicsansms, EMERALD, 40)
-        text = Text(self.sc, "Finish", font=font)
-        btn = Button(self.sc, 250, 400, text, color=GRAY, function=sys.exit)
+        text = Text(self.sc, "Аркада", font=font)
+        btn = DDownButton(self.sc, 250, 400, text, texts, color=GRAY)
 
         return btn
 
-    def create_progressbar(self, func):
-        font = Font(comicsansms, EMERALD, 40)
-        text = Text(self.sc, "", font=font)
-        progressbar = Progressbar(self.sc, 100, 200, text, width = 600, function=func)
-
-        return progressbar
-
     def create_widget(self):
-        btn = self.create_btn()
-        btn.disactivate()
-        progressbar = self.create_progressbar(btn.activate)
+        btn = self.create_dropdown()
 
-        return [btn, progressbar]
+        return btn
 
     def check(self, event, obj):
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
                 mouse = pg.mouse.get_pos()
-                evt = obj[0].click(mouse)
+                evt = obj.click(mouse)
                 try:
                     evt()
                 except TypeError:
                     print(evt)
 
-    def update(self, widgets, mouse):
-        widgets[1].update()
-        widgets[0].update(mouse)
+    def update(self, widget, mouse):
+        widget.update(mouse)
+
 
 
 def play(time):

@@ -6,7 +6,7 @@ from abstract import AbsPanel
 from typing import List, Optional, Tuple
 
 # import user's library
-from decorate import tools, check_size, check_key, is_active, count
+from .decorate import tools, check_size, check_key, is_active, count
 from logger import terminal_print_cls, termimal_print, log_print_cls, log_print
 from constpack import WHITE, BLACK, GRAY
 
@@ -29,75 +29,6 @@ from constpack import WHITE, BLACK, GRAY
 # -Complete menu
 # -Drop-Down Button
 #>------------SUMMARY----------------<
-
-
-#--------------Drop-Dowm Button-------------
-class DDownButton(AbsPanel):
-    def __init__(self, screen, x, y, texts, color = WHITE,
-                 width=300, height=110, img_active=None, img_disactive=None, music=None
-                 ):
-        super().__init__(screen, x, y, texts[0], color,
-                         width, height, img_active, img_disactive, music
-                         )
-
-        self.rect_drop = pygame.Rect(x, y, width-10, height-10)
-        self.texts = texts
-        self.n = 1
-        self.coords = [(x+x*i, y+y*i) for i in range(1, len(texts))]
-        print("COORDS", self.coords)
-        self.flag = False
-        self.rects = [pg.Rect(i[0], i[1], width-10, height-10) for i in check()]
-
-    def check():
-        try:
-            len = self.coords[0:3]
-        except IndexError:
-            len = self.coords
-
-        return len
-
-    def click(self, mouse):
-        if self.flag is False:
-            if self.x < mouse[0] < self.x + self.width and self.y < mouse[1] < self.y + self.height:
-                self.flag = True
-
-        else:
-            for coord in check():
-                x, y = self.x + coord[0], self.y + coord[1]
-                if x < mouse[0] < x + (self.width-10) and x < mouse[1] < y + (self.height-10):
-                    self.change_text()
-
-            self.flag = False
-
-    def change_text(self):
-        self.text = self.texts[self.n]
-        self.n += 1
-
-        if self.n > len(self.texts):
-            self.n = 0
-
-    @is_active
-    def update(self, *args):
-        mouse = args[0]
-
-        if self.x < mouse[0] < self.x + self.width and self.y < mouse[1] < self.y + self.height:
-            self.in_box()
-        else:
-            self.out_box()
-
-        self.text.draw_in_obj(self.x, self.y)
-
-        if self.flag is True:
-            for num, rect in enumerate(check()):
-                pygame.draw.rect(self.screen, self.rect_color, rect)
-                self.texts[num+1]
-
-
-
-
-
-
-
 
 
 #-----------------Progressbar--------------
@@ -230,7 +161,7 @@ class Entry(AbsPanel):
 
 
 #-------------------MENU--------------------
-class ObjsMenu:
+class Frame:
     def __init__(self, screen, clock,
                  FPS=30, img_fon=None, sound=None
                  ):
@@ -458,46 +389,6 @@ class Label(AbsPanel):
         pass
 
 
-#---------------------PANEL-----------------------
-"""
-class Panel(AbsPanel):
-    def __init__(self, screen, x, y,
-                 width=600, height=600, image=None,
-                 objs_text=None, tX = None, tY = None, step=None, type=None, location="C"
-                 ):
-        super().__init__(screen, x, y, None, width, height, img_disactive=image)
-        self.screen = screen
-
-        self.objs_text = objs_text
-        self.objs_text.auto_draw(tX, tY, step, type, location)
-
-    def chech_text(self):
-        def check():
-            coords = self.objs_text.get_size()
-            indents = self.objs_text.text_indents
-            x, y = self.width, self.height
-
-            for text in range(self.objs_text.amount):
-                x += indents[0]
-                y += indents[1]
-                if coords[text][0] > x and coords[text][1] > y:
-                    raise ValueError(f"Size ERROR. Text size Text more then panel size{self.obj_texts[text].text}. \
-                    Text{coords[text]} Panel{self.width, self.height}. Indents{indents}")
-
-            pass
-        pass
-
-    #@tools
-    def draw(self):
-        pass
-
-    def update(self):
-        self.objs_text.draw_in_obj()
-"""
-
-#----------------------------------------------------------
-
-
 #------------------------TEXT------------------------------
 class ObjsText():
     def __init__(self, screen, texts: List[str], font=None,
@@ -711,6 +602,110 @@ class ObjPanel():
             pnl.update()
 
 """
+
+
+"""
+#--------------Drop-Dowm Button-------------
+class DDownButton(AbsPanel):
+    @staticmethod
+    def check(dict):
+        try:
+            return dict[0:3]
+        except IndexError:
+            return dict
+
+    def __init__(self, screen, x, y, text, type_texts, color = WHITE,
+                 width=300, height=110, img_active=None, img_disactive=None, music=None
+                 ):
+        super().__init__(screen, x, y, text, color,
+                         width, height, img_active, img_disactive, music
+                         )
+        print(type_texts)
+        self.rect_drop = pygame.Rect(x, y, width-10, height-10)
+        self.type_texts = type_texts
+        self.len = len(type_texts)
+        self.n = 1
+        self.coords = [(x+x*i, y+y*i) for i in range(1, self.len)]
+        print("COORDS", self.coords)
+        self.flag = False
+        self.rects = [pg.Rect(i[0], i[1], width-10, height-10) for i in check(self.coords)]
+
+    def click(self, mouse):
+        if self.flag is False:
+            if self.x < mouse[0] < self.x + self.width and self.y < mouse[1] < self.y + self.height:
+                self.flag = True
+
+        else:
+            for coord in check(self.coords):
+                x, y = self.x + coord[0], self.y + coord[1]
+                if x < mouse[0] < x + (self.width-10) and x < mouse[1] < y + (self.height-10):
+                    self.change_text()
+
+            self.flag = False
+
+    def change_text(self):
+        self.text.change_text(self.type_texts[n])
+        self.n += 1
+
+        if self.n > self.len:
+            self.n = 0
+
+    @is_active
+    def update(self, *args):
+        mouse = args[0]
+
+        if self.x < mouse[0] < self.x + self.width and self.y < mouse[1] < self.y + self.height:
+            self.in_box()
+        else:
+            self.out_box()
+
+        self.text.draw_in_obj(self.x, self.y)
+
+        if self.flag is True:
+            for num, rect in enumerate(check()):
+                pygame.draw.rect(self.screen, self.rect_color, rect)
+                self.texts[num+1]
+
+"""
+
+#---------------------PANEL-----------------------
+"""
+class Panel(AbsPanel):
+    def __init__(self, screen, x, y,
+                 width=600, height=600, image=None,
+                 objs_text=None, tX = None, tY = None, step=None, type=None, location="C"
+                 ):
+        super().__init__(screen, x, y, None, width, height, img_disactive=image)
+        self.screen = screen
+
+        self.objs_text = objs_text
+        self.objs_text.auto_draw(tX, tY, step, type, location)
+
+    def chech_text(self):
+        def check():
+            coords = self.objs_text.get_size()
+            indents = self.objs_text.text_indents
+            x, y = self.width, self.height
+
+            for text in range(self.objs_text.amount):
+                x += indents[0]
+                y += indents[1]
+                if coords[text][0] > x and coords[text][1] > y:
+                    raise ValueError(f"Size ERROR. Text size Text more then panel size{self.obj_texts[text].text}. \
+                    Text{coords[text]} Panel{self.width, self.height}. Indents{indents}")
+
+            pass
+        pass
+
+    #@tools
+    def draw(self):
+        pass
+
+    def update(self):
+        self.objs_text.draw_in_obj()
+"""
+
+#----------------------------------------------------------
 
 
 #-------------------------------------------------------

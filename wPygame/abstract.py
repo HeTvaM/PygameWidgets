@@ -1,12 +1,13 @@
 # init basic library
 import os
+import sys
 import pygame as pg
 
 from abc import ABC, abstractmethod
 
 # init user's library
 from constpack import WHITE, BLACK, GRAY
-from decorate import tools
+from .decorate import tools
 
 #>------------SUMMARY----------------<
 # This module contains asbractic classes that simplify code relationships.
@@ -87,4 +88,54 @@ class AbsPanel(ABC):
 
     @abstractmethod
     def update(self):
+        pass
+
+
+
+class Scene(ABC):
+    def __init__(self, screen, time):
+        self.sc = screen
+        self.clock = pg.time.Clock()
+        self.time = time
+
+    def check_event(self, widgets):
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+                sys.exit()
+
+            self.check(event, widgets)
+
+    def check_time(self, time):
+        if time//30 > self.time:
+            pg.quit()
+            sys.exit()
+
+    def start(self):
+        play = True
+        time = 0
+        widget = self.create_widget()
+        cursor = pg.mouse.set_cursor(*pg.cursors.arrow)
+        while play:
+            self.check_time(time)
+            self.clock.tick(60)
+            self.check_event(widget)
+            time += 1
+
+            mouse = pg.mouse.get_pos()
+
+            self.sc.fill((0,0,0))
+            self.update(widget, mouse)
+            pg.display.flip()
+
+    @abstractmethod
+    def check(self, *args):
+        pass
+
+    @abstractmethod
+    def create_widget(self):
+        pass
+
+    @abstractmethod
+    def update(self, *args):
         pass

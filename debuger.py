@@ -49,7 +49,7 @@ class RunThread(Thread):
         self.time = int(time)
 
     def run(self):
-        from Examples.progressbar import play #Demo import play
+        from Examples.drop_down import play #Demo import play
         play(self.time)
 
         del()
