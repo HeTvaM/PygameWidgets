@@ -6,8 +6,8 @@ import pygame as pg
 from abc import ABC, abstractmethod
 
 # init user's library
-from constpack import WHITE, BLACK, GRAY
-from .decorate import tools
+from .constpack import WHITE, BLACK, GRAY
+from decorate import tools
 
 #>------------SUMMARY----------------<
 # This module contains asbractic classes that simplify code relationships.

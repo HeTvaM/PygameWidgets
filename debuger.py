@@ -34,14 +34,6 @@ def index(time):
 
     return "<h1>RELOAD</h1>"
 
-# route which open demo.py
-@app.route("/update")
-def update():
-    from Demo import play #Demo import play
-    play()
-
-    return "<h1>END UPDATE</h1>"
-
 # user class to manage Thread
 class RunThread(Thread):
     def __init__(self, time):
@@ -49,7 +41,7 @@ class RunThread(Thread):
         self.time = int(time)
 
     def run(self):
-        from Examples.drop_down import play #Demo import play
+        from Demo import play #Demo import play
         play(self.time)
 
         del()

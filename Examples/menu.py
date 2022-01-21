@@ -3,6 +3,7 @@ import pygame as pg
 import sys
 
 # import user library
+from WPygame.menu import Menu
 from WPygame.Widgets import Font, Text
 from WPygame.logger import log, log_with_return
 from WPygame.constpack import GRAY, BLACK, EMERALD
@@ -23,6 +24,25 @@ class Scene:
         self.sc = screen
         self.clock = pg.time.Clock()
         self.time = time
+
+    def create_text():
+        font = Font(comicsansms, EMERALD, 40)
+        text = Text(self.sc, "Menu", font=font)
+
+        return text
+
+    def create_objText():
+        texts = ["Начать", "Настройки", "Выйти"]
+        font = Font(comicsansms, EMERALD, 40)
+        objtext = objText(self.sc, texts, font=font)
+
+        return objText
+
+    def create_widget(self):
+        menu = Menu(self.sc, 100, 50)
+        menu.create_btn(create_objText())
+        menu.create_text(create_text())
+
 
     def check_event(self):
         for event in pg.event.get():

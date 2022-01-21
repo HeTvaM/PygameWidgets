@@ -3,10 +3,10 @@ import pygame as pg
 import sys
 
 # import user library
-from WPygame import Font, Text, Button, Label, Menu, ObjsText, ObjsMenu, Entry
-from logger import log, log_with_return
-from constpack import GRAY, BLACK, EMERALD
-from constpack import arial, vivaldi, comicsansms
+from wPygame.Widgets import Font, Text, Button, Label, ObjsText, Entry
+from wPygame.logger import log, log_with_return
+from wPygame.constpack import GRAY, BLACK, EMERALD
+from wPygame.constpack import arial, vivaldi, comicsansms
 
 #>------------SUMMARY----------------<
 # this module is used to test and provide a demo of how the library works.
@@ -49,34 +49,6 @@ class Scene:
         text.auto_draw(x=500, y=250, step=10, type=0)
         return text
 
-    def create_menu(self):
-        text_list = ["IT's WORK",
-                     "Hello WORLD!",
-                     "My name is Danila"
-                     ]
-        font = Font(comicsansms, EMERALD, 25)
-        text = ObjsText(self.sc, text_list, font=font)
-        menu = Menu(self.sc, 3, 25, 200, 25, text, type=1,
-                    width=300, height=110
-                    )
-
-        return menu
-
-    def full_menu(self):
-        text_text = ["MENU"]
-        text_btn = ["Play",
-                    "Setting",
-                    "Exit"]
-        font = Font(comicsansms, EMERALD, 50)
-        font_btn = Font(arial, GRAY, 40)
-
-        objs_text = ObjsText(self.sc, text_btn, font=font)
-
-        objs_menu = ObjsMenu(self.sc, self.clock)
-        objs_menu.init_text(text_text, [300, 150], font=font)
-        objs_menu.init_button(3, 250, 250, 50, objs_text)
-
-        return objs_menu
 
     def check_event_entry(self, obj, btn, id):
         for event in pg.event.get():
