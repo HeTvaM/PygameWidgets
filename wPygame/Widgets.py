@@ -8,7 +8,7 @@ from .abstract import AbsPanel
 from .logger import terminal_print_cls, termimal_print, log_print_cls, log_print
 from .constpack import WHITE, BLACK, GRAY
 
-from decorate import tools, check_size, check_key, is_active, count
+from .decorate import tools, check_size, check_key, is_active, count
 
 
 #>------------SUMMARY----------------<
