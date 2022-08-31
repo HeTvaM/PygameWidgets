@@ -12,9 +12,8 @@ import pygame
 
 def tools(*args, **kwargs):
     def inside(func):
-        def wrapper(*args, **kwargs):
-            cls = args[0]
-            obj = func(cls)
+        def wrapper(cls, *args, **kwargs):
+            obj = func(cls, *args, **kwargs)
 
             if obj is not None:
                 cls.screen.blit(obj, (cls.x,cls.y))
@@ -37,7 +36,7 @@ def check_size(func):
             else:
                 count += 1
         if count == cls.amount:
-            obj = func(cls)
+            obj = func(cls, *args, **kwargs)
         else:
             raise ValueError(f"Value error. Pls chech size obj №{count+1} it's size {tSize[count+1]}. Window size{wSize}")
 
@@ -60,19 +59,16 @@ def check_key(func):
     return wrapper
 
 def is_active(func):
-    def wrapper(*args, **kwargs):
-        cls = args[0]
-
-        if cls.active is True:
-            func(*args)
+    def wrapper(cls, *args, **kwargs):
+        if cls.active:
+            func(cls, *args, **kwargs)
 
     return wrapper
 
 def count(time, command):
     def inside(func):
-        def wrapper(*args, **kwargs):
-            cls = args[0]
-            flag = func(*args, **kwargs)
+        def wrapper(cls, *args, **kwargs):
+            flag = func(cls, *args, **kwargs)
 
             if cls.count // 30 > time:
                 if flag:

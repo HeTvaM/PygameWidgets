@@ -5,7 +5,6 @@ from typing import List, Optional, Tuple
 
 # import user's library
 from .abstract import AbsPanel
-from .logger import terminal_print_cls, termimal_print, log_print_cls, log_print
 from .constpack import WHITE, BLACK, GRAY
 
 from .decorate import tools, check_size, check_key, is_active, count
@@ -120,7 +119,7 @@ class Entry(AbsPanel):
 
             if self.res == 1:
                 self.input_text += "|"
-            if self.res == 0:
+            else:
                 self.count = 0
 
             self.res = 1 - self.count // 35 % 2
