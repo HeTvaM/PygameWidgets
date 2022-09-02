@@ -1,0 +1,4 @@
+### PYTHON TEMPLATE
+__pycache__/
+*.py[cod]
+*$py.class
